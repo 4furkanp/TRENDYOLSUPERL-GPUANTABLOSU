@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Süper Lig 2025-2026 Puan Durumu</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+        }
+        table {
+            width: 80%;
+            margin: 30px auto;
+            border-collapse: collapse;
+            background: #fff;
+        }
+        th, td {
+            padding: 8px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+        th {
+            background-color: #c00;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<h2 style="text-align:center;">Süper Lig 2025-2026 Puan Durumu</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Sıra</th>
+            <th>Takım</th>
+            <th>O</th>
+            <th>G</th>
+            <th>B</th>
+            <th>M</th>
+            <th>P</th>
+        </tr>
+    </thead>
+    <tbody id="puanDurumu"></tbody>
+</table>
+
+<script>
+const apiKey = "3a4da421cc3039e2832634677d2324c6";
+
+const url = "https://v3.football.api-sports.io/standings?league=203&season=2026";
+
+fetch(url, {
+    headers: {
+        "x-apisports-key": apiKey
+    }
+})
+.then(response => response.json())
+.then(data => {
+    const teams = data.response[0].league.standings[0];
+    let html = "";
+
+    teams.forEach(team => {
+        html += `
+            <tr>
+                <td>${team.rank}</td>
+                <td>${team.team.name}</td>
+                <td>${team.all.played}</td>
+                <td>${team.all.win}</td>
+                <td>${team.all.draw}</td>
+                <td>${team.all.lose}</td>
+                <td>${team.points}</td>
+            </tr>
+        `;
+    });
+
+    document.getElementById("puanDurumu").innerHTML = html;
+})
+.catch(error => {
+    console.error("Hata:", error);
+});
+</script>
+
+</body>
+</html>
