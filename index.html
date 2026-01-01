@@ -1,81 +1,65 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <title>Süper Lig 2025-2026 Puan Durumu</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f4f4;
-        }
-        table {
-            width: 80%;
-            margin: 30px auto;
-            border-collapse: collapse;
-            background: #fff;
-        }
-        th, td {
-            padding: 8px;
-            border: 1px solid #ddd;
-            text-align: center;
-        }
-        th {
-            background-color: #c00;
-            color: white;
-        }
-    </style>
+<meta charset="UTF-8">
+<title>Süper Lig 2025-2026 Puan Durumu</title>
+<style>
+body { font-family: Arial; background:#f4f4f4; }
+table { width:80%; margin:20px auto; border-collapse:collapse; background:#fff; }
+th,td { border:1px solid #ddd; padding:8px; text-align:center; }
+th { background:#c00; color:#fff; }
+.msg { text-align:center; font-weight:bold; padding:20px; }
+</style>
 </head>
 <body>
 
 <h2 style="text-align:center;">Süper Lig 2025-2026 Puan Durumu</h2>
 
 <table>
-    <thead>
-        <tr>
-            <th>Sıra</th>
-            <th>Takım</th>
-            <th>O</th>
-            <th>G</th>
-            <th>B</th>
-            <th>M</th>
-            <th>P</th>
-        </tr>
-    </thead>
-    <tbody id="puanDurumu"></tbody>
+<thead>
+<tr>
+<th>Sıra</th><th>Takım</th><th>O</th><th>G</th><th>B</th><th>M</th><th>P</th>
+</tr>
+</thead>
+<tbody id="puanDurumu">
+<tr><td colspan="7" class="msg">Yükleniyor...</td></tr>
+</tbody>
 </table>
 
 <script>
-const apiKey = "3a4da421cc3039e2832634677d2324c6";
+const apiKey = "8e9e365eff1c38a3f2210a73b5c563af";
 
-const url = "https://v3.football.api-sports.io/standings?league=203&season=2026";
-fetch(url, {
-    headers: {
-        "x-apisports-key": apiKey
-    }
+fetch("https://v3.football.api-sports.io/standings?league=203&season=2026", {
+    headers: { "x-apisports-key": apiKey }
 })
-.then(response => response.json())
+.then(res => res.json())
 .then(data => {
-    const teams = data.response[0].league.standings[0];
-    let html = "";
+    const teams = data?.response?.[0]?.league?.standings?.[0];
 
-    teams.forEach(team => {
-        html += `
-            <tr>
-                <td>${team.rank}</td>
-                <td>${team.team.name}</td>
-                <td>${team.all.played}</td>
-                <td>${team.all.win}</td>
-                <td>${team.all.draw}</td>
-                <td>${team.all.lose}</td>
-                <td>${team.points}</td>
-            </tr>
+    if (!teams || teams.length === 0) {
+        document.getElementById("puanDurumu").innerHTML = `
+            <tr><td colspan="7" class="msg">Puan durumu henüz API tarafından sağlanmıyor</td></tr>
         `;
-    });
+        return;
+    }
 
-    document.getElementById("puanDurumu").innerHTML = html;
+    document.getElementById("puanDurumu").innerHTML = teams.map(team => `
+        <tr>
+            <td>${team.rank}</td>
+            <td>${team.team.name}</td>
+            <td>${team.all.played}</td>
+            <td>${team.all.win}</td>
+            <td>${team.all.draw}</td>
+            <td>${team.all.lose}</td>
+            <td>${team.points}</td>
+        </tr>
+    `).join("");
 })
-.catch(error => {
-    console.error("Hata:", error);
+.catch(err => {
+    console.error("API HATASI:", err);
+    document.getElementById("puanDurumu").innerHTML = `
+        <tr><td colspan="7" class="msg">API bağlantı hatası oluştu</td></tr>
+    `;
 });
 </script>
 
